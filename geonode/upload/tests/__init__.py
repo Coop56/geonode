@@ -18,15 +18,15 @@
 #
 #########################################################################
 
-from geonode.tests.base import GeoNodeBaseTestSupport
-
 import contextlib
 import os
 import shutil
 import tempfile
 import zipfile
-import geonode.upload.files as files
 
+from django.test.testcases import TestCase
+
+import geonode.upload.files as files
 from geonode.upload.files import SpatialFiles, scan_file
 from geonode.upload.files import _rename_files, _contains_bad_names
 
@@ -60,7 +60,7 @@ def create_files(names, zipped=False):
     shutil.rmtree(tmpdir)
 
 
-class FilesTests(GeoNodeBaseTestSupport):
+class FilesTests(TestCase):
 
     def test_types(self):
         for t in files.types:
@@ -130,7 +130,7 @@ class FilesTests(GeoNodeBaseTestSupport):
                 self.assertTrue(os.path.exists(path))
 
 
-class TimeFormFormTest(GeoNodeBaseTestSupport):
+class TimeFormFormTest(TestCase):
 
     def _form(self, data):
         # prevent circular deps error - not sure why this module was getting

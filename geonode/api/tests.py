@@ -28,6 +28,7 @@ from geonode.groups.models import GroupProfile
 from guardian.shortcuts import get_anonymous_user
 
 from geonode.tests.base import GeoNodeBaseTestSupport
+from django.test.testcases import TestCase
 
 from geonode.base.populate_test_data import all_public
 from geonode.layers.models import Layer

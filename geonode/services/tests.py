@@ -18,13 +18,11 @@
 #
 #########################################################################
 
-from geonode.tests.base import GeoNodeBaseTestSupport
-
-from unittest import TestCase as StandardTestCase
-
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import slugify
+from django.test.testcases import TestCase
+
 import mock
 from owslib.map.wms111 import ContentMetadata
 
@@ -37,7 +35,7 @@ from .serviceprocessors.wms import WebMapService
 from owslib.wms import WebMapService as OwsWebMapService
 
 
-class ModuleFunctionsTestCase(StandardTestCase):
+class ModuleFunctionsTestCase(TestCase):
 
     @mock.patch("geonode.services.serviceprocessors.base.Catalog",
                 autospec=True)
@@ -108,7 +106,7 @@ class ModuleFunctionsTestCase(StandardTestCase):
         mock_wms_handler.assert_called_with(phony_url)
 
 
-class WmsServiceHandlerTestCase(GeoNodeBaseTestSupport):
+class WmsServiceHandlerTestCase(TestCase):
 
     def setUp(self):
         super(WmsServiceHandlerTestCase, self).setUp()

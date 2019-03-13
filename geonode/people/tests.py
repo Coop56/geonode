@@ -18,17 +18,17 @@
 #
 #########################################################################
 
-from geonode.tests.base import GeoNodeBaseTestSupport
 
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.contrib.sites.models import Site
+from django.test.testcases import TestCase
 
 from geonode.people import profileextractors
 
 
-class PeopleTest(GeoNodeBaseTestSupport):
+class PeopleTest(TestCase):
 
     fixtures = ['initial_data.json', 'people_data.json']
 
@@ -61,7 +61,7 @@ class PeopleTest(GeoNodeBaseTestSupport):
             site.name)
 
 
-class FacebookExtractorTestCase(GeoNodeBaseTestSupport):
+class FacebookExtractorTestCase(TestCase):
 
     def setUp(self):
         super(FacebookExtractorTestCase, self).setUp()
@@ -126,7 +126,7 @@ class FacebookExtractorTestCase(GeoNodeBaseTestSupport):
             self.extractor.extract_zipcode(self.data)
 
 
-class LinkedInExtractorTestCase(GeoNodeBaseTestSupport):
+class LinkedInExtractorTestCase(TestCase):
 
     def setUp(self):
         super(LinkedInExtractorTestCase, self).setUp()

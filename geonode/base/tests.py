@@ -18,14 +18,15 @@
 #
 #########################################################################
 
-from geonode.tests.base import GeoNodeBaseTestSupport
+from django.template import Template, Context
+from django.test.testcases import TestCase
+
 from geonode.base.models import (
     ResourceBase, MenuPlaceholder, Menu, MenuItem
 )
-from django.template import Template, Context
 
 
-class ThumbnailTests(GeoNodeBaseTestSupport):
+class ThumbnailTests(TestCase):
 
     def setUp(self):
         super(ThumbnailTests, self).setUp()
@@ -37,7 +38,7 @@ class ThumbnailTests(GeoNodeBaseTestSupport):
         self.assertEquals('/static/geonode/img/missing_thumb.png', missing)
 
 
-class RenderMenuTagTest(GeoNodeBaseTestSupport):
+class RenderMenuTagTest(TestCase):
     """
     Test class for render_menu and render_top_menu custom tags of base_tags
     """

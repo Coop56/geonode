@@ -18,15 +18,15 @@
 #
 #########################################################################
 
-from geonode.tests.base import GeoNodeBaseTestSupport
-
 import json
 from django.core.urlresolvers import reverse
+from django.test.testcases import TestCase
+
 from geonode.base.models import ResourceBase
 from geonode.catalogue import get_catalogue
 
 
-class CatalogueTest(GeoNodeBaseTestSupport):
+class CatalogueTest(TestCase):
 
     def setUp(self):
         super(CatalogueTest, self).setUp()
