@@ -1,6 +1,6 @@
 Django==1.11.20
 six==1.10.0
-amqp==2.2.2
+amqp==2.4.2
 arcrest==10.3
 autoflake==0.7
 awesome-slugify==1.6.5

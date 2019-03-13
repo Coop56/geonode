@@ -11,7 +11,7 @@ psycopg2<=2.7.3.1 # python-psycopg2 (2.7.3.1 in our ppa)
 Django==1.11.20 # python-django (1.8.19 in our ppa) FIXME
 
 # Other
-amqp==2.2.2 # (python-amqp 2.2.2 in our ppa)
+amqp==2.4.2 # (python-amqp 2.4.2 in our ppa)
 pyyaml>=4.2b1 # (python-pyyaml 3.12 in out ppa)
 beautifulsoup4<=4.4.1 # python-bs4 (4.4.1)
 httplib2<=0.10.3 # python-httplib2 (0.10.3 in our ppa)
