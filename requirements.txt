@@ -13,7 +13,7 @@ Django==1.11.20 # python-django (1.8.19 in our ppa) FIXME
 # Other
 amqp==2.4.2 # (python-amqp 2.4.2 in our ppa)
 pyyaml>=4.2b1 # (python-pyyaml 3.12 in out ppa)
-beautifulsoup4==4.7.1 # python-bs4 (4.4.1)
+beautifulsoup4==4.7.1 # python-bs4 (4.7.1)
 httplib2<=0.10.3 # python-httplib2 (0.10.3 in our ppa)
 Paver<=1.2.4 # python-paver (1.2.4)
 nose<=1.3.7 # python-nose (1.3.7)

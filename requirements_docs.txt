@@ -4,7 +4,7 @@ amqp==2.4.2
 arcrest==10.3
 autoflake==1.2
 awesome-slugify==1.6.5
-beautifulsoup4==4.4.1
+beautifulsoup4==4.7.1
 boto==2.38.0
 celery==4.2.1
 coreschema==0.0.4
