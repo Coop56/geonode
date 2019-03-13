@@ -23,7 +23,7 @@ decorator<=4.1.2 # python-decorator (4.1.2 in our ppa)
 celery==4.2.1 # python-celery (4.1.0)
 kombu==4.2.1 # python-kombu (4.1.0 in our ppa)
 coreschema==0.0.4 # python-coreschema (0.0.4 in our ppa)
-autoflake<=0.7 # python-autoflake (0.7 in our ppa)
+autoflake==1.2 # python-autoflake (1.2 in our ppa)
 flake8>=2.6.2,<=3.5.0 # python-flake8 (2.5.4) FIXME
 pycodestyle<2.4.0 # missing TODO
 pyflakes>=1.2.3,<=1.6.0 # python-pyflakes (1.6.0 in our ppa) FIXME
