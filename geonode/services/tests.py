@@ -21,7 +21,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import Client
 from selenium import webdriver
-from unittest import TestCase as StandardTestCase
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
@@ -32,7 +31,6 @@ import mock
 from owslib.map.wms111 import ContentMetadata
 
 from geonode.services.utils import test_resource_table_status
-from geonode.tests.base import GeoNodeBaseTestSupport
 from . import enumerations, forms
 from .models import Service
 from .serviceprocessors import (base,
