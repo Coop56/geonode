@@ -123,7 +123,7 @@ def backup_full():
 
       print "Backup Finished. Archive generated '"+os.path.join('backup', dir_time_suffix+'.zip')+"'."
 
-   except Exception, err:
+   except Exception as err:
       pass
 
    traceback.print_exc()

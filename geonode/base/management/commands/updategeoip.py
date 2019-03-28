@@ -106,14 +106,14 @@ class Command(BaseCommand):
                                 fromfile = zfile.extractfile(m)
                                 logger.info("Writing to %s", fname)
                                 tofile.write(fromfile.read())
-                            except Exception, err:
+                            except Exception as err:
                                 logger.error("Cannot extract %s and write to %s: %s", m, fname, err, exc_info=err)
                                 try:
                                     os.remove(fname)
                                 except OSError:
                                     logger.debug("Could not delete file %s", fname)
                         return
-        except Exception, err:
+        except Exception as err:
             logger.error("Cannot process %s: %s", f, err, exc_info=err)
 
 
@@ -124,11 +124,11 @@ class Command(BaseCommand):
                 with open(fname, 'wb') as tofile:
                     try:
                         tofile.write(zfile.read())
-                    except Exception, err:
+                    except Exception as err:
                         logger.error("Cannot extract %s and write to %s: %s", f, fname, err, exc_info=err)
                         try:
                             os.remove(fname)
                         except OSError:
                             logger.debug('Could not delete file %s' % fname)
-        except Exception, err:
+        except Exception as err:
             logger.error("Cannot process %s: %s", f, err, exc_info=err)

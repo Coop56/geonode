@@ -162,7 +162,7 @@ def restore_full(archive):
       except:
          traceback.print_exc()
 
-   except Exception, err:
+   except Exception as err:
       print str(err)
 
    print "Restore finished. Please find restored files and dumps into: '"+target_folder+"'."

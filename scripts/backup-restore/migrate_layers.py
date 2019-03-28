@@ -66,7 +66,7 @@ def migrate_layers(archive, owner):
                for obj in objects:
                   obj.save(using=DEFAULT_DB_ALIAS)
 
-   except Exception, err:
+   except Exception as err:
       traceback.print_exc()
 
    print "Restore finished. Please find restored files and dumps into: '"+target_folder+"'."
