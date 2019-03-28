@@ -520,8 +520,8 @@ class MembershipTest(GeoNodeBaseTestSupport):
         normal = get_user_model().objects.get(username="norman")
         group = GroupProfile.objects.get(slug="bar")
 
-        self.assert_(not group.user_is_member(anon))
-        self.assert_(not group.user_is_member(normal))
+        self.assertTrue(not group.user_is_member(anon))
+        self.assertTrue(not group.user_is_member(normal))
 
     def test_group_add_member(self):
         """
@@ -532,7 +532,7 @@ class MembershipTest(GeoNodeBaseTestSupport):
         normal = get_user_model().objects.get(username="norman")
         group = GroupProfile.objects.get(slug="bar")
         group.join(normal)
-        self.assert_(group.user_is_member(normal))
+        self.assertTrue(group.user_is_member(normal))
         self.assertRaises(ValueError, lambda: group.join(anon))
 
     def test_profile_is_member_of_group(self):

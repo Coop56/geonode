@@ -82,26 +82,26 @@ class LayersTest(GeoNodeBaseTestSupport):
     def test_data(self):
         '''/data/ -> Test accessing the data page'''
         response = self.client.get(reverse('layer_browse'))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_describe_data_2(self):
         '''/data/geonode:CA/metadata -> Test accessing the description of a layer '''
         self.assertEqual(10, get_user_model().objects.all().count())
         response = self.client.get(reverse('layer_metadata', args=('geonode:CA',)))
         # Since we are not authenticated, we should not be able to access it
-        self.failUnlessEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         # but if we log in ...
         self.client.login(username='admin', password='admin')
         # ... all should be good
         response = self.client.get(reverse('layer_metadata', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_describe_data_3(self):
         '''/data/geonode:CA/metadata_detail -> Test accessing the description of a layer '''
         self.client.login(username='admin', password='admin')
         # ... all should be good
         response = self.client.get(reverse('layer_metadata_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Approved", count=1, status_code=200, msg_prefix='', html=False)
         self.assertContains(response, "Published", count=1, status_code=200, msg_prefix='', html=False)
         self.assertContains(response, "Featured", count=1, status_code=200, msg_prefix='', html=False)
@@ -113,7 +113,7 @@ class LayersTest(GeoNodeBaseTestSupport):
         lyr.group = group
         lyr.save()
         response = self.client.get(reverse('layer_metadata_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<dt>Group</dt>", count=1, status_code=200, msg_prefix='', html=False)
         lyr.group = None
         lyr.save()
@@ -124,24 +124,24 @@ class LayersTest(GeoNodeBaseTestSupport):
     def test_upload_layer(self):
         # Test redirection to login form when not logged in
         response = self.client.get(reverse('layer_upload'))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # Test return of upload form when logged in
         self.client.login(username="bobby", password="bob")
         response = self.client.get(reverse('layer_upload'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_describe_data(self):
         '''/data/geonode:CA/metadata -> Test accessing the description of a layer '''
         self.assertEqual(10, get_user_model().objects.all().count())
         response = self.client.get(reverse('layer_metadata', args=('geonode:CA',)))
         # Since we are not authenticated, we should not be able to access it
-        self.failUnlessEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         # but if we log in ...
         self.client.login(username='admin', password='admin')
         # ... all should be good
         response = self.client.get(reverse('layer_metadata', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_layer_attributes(self):
         lyr = Layer.objects.all().first()
@@ -186,14 +186,14 @@ class LayersTest(GeoNodeBaseTestSupport):
             bbox_to_projection([float(coord) for coord in layer_bbox] + [lyr.srid, ],
                                target_srid=4326)[:4])
         logger.info(projected_bbox)
-        self.assertEquals(projected_bbox, [-180.0, -90.0, 180.0, 90.0])
+        self.assertEqual(projected_bbox, [-180.0, -90.0, 180.0, 90.0])
         logger.info(lyr.ll_bbox)
-        self.assertEquals(lyr.ll_bbox, [-180.0, 180.0, -90.0, 90.0, u'EPSG:4326'])
+        self.assertEqual(lyr.ll_bbox, [-180.0, 180.0, -90.0, 90.0, u'EPSG:4326'])
         projected_bbox = decimal_encode(
             bbox_to_projection([float(coord) for coord in layer_bbox] + [lyr.srid, ],
                                target_srid=3857)[:4])
         logger.info(projected_bbox)
-        self.assertEquals(projected_bbox, [-20037397.0233, -74299743.4007, 20037397.0233, 74299743.4006])
+        self.assertEqual(projected_bbox, [-20037397.0233, -74299743.4007, 20037397.0233, 74299743.4006])
 
     def test_layer_attributes_feature_catalogue(self):
         """ Test layer feature catalogue functionality
@@ -201,14 +201,14 @@ class LayersTest(GeoNodeBaseTestSupport):
         # test a non-existing layer
         url = reverse('layer_feature_catalogue', args=('bad_layer',))
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
         # Get the layer to work with
         layer = Layer.objects.all()[3]
         url = reverse('layer_feature_catalogue', args=(layer.alternate,))
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(response['content-type'], 'application/xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/xml')
 
     def test_layer_attribute_config(self):
         lyr = Layer.objects.all().first()
@@ -249,22 +249,22 @@ class LayersTest(GeoNodeBaseTestSupport):
 
     def test_layer_links(self):
         lyr = Layer.objects.filter(storeType="dataStore").first()
-        self.assertEquals(lyr.storeType, "dataStore")
+        self.assertEqual(lyr.storeType, "dataStore")
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             links = Link.objects.filter(resource=lyr.resourcebase_ptr, link_type="metadata")
             self.assertIsNotNone(links)
-            self.assertEquals(len(links), 7)
+            self.assertEqual(len(links), 7)
             for ll in links:
-                self.assertEquals(ll.link_type, "metadata")
+                self.assertEqual(ll.link_type, "metadata")
 
         lyr = Layer.objects.filter(storeType="coverageStore").first()
-        self.assertEquals(lyr.storeType, "coverageStore")
+        self.assertEqual(lyr.storeType, "coverageStore")
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             links = Link.objects.filter(resource=lyr.resourcebase_ptr, link_type="metadata")
             self.assertIsNotNone(links)
-            self.assertEquals(len(links), 7)
+            self.assertEqual(len(links), 7)
             for ll in links:
-                self.assertEquals(ll.link_type, "metadata")
+                self.assertEqual(ll.link_type, "metadata")
 
     def test_get_valid_user(self):
         # Verify it accepts an admin user
@@ -396,8 +396,8 @@ class LayersTest(GeoNodeBaseTestSupport):
         self.assertTrue(form.is_valid())
 
         tempdir = form.write_files()[0]
-        self.assertEquals(set(os.listdir(tempdir)),
-                          set(['foo.shp', 'foo.shx', 'foo.dbf', 'foo.prj']))
+        self.assertEqual(set(os.listdir(tempdir)),
+                         set(['foo.shp', 'foo.shx', 'foo.dbf', 'foo.prj']))
 
         the_zip = zipfile.ZipFile('test_upload.zip', 'w')
         in_memory_file = StringIO.StringIO()
@@ -411,29 +411,29 @@ class LayersTest(GeoNodeBaseTestSupport):
         form = LayerUploadForm(dict(), files)
         self.assertTrue(form.is_valid())
         tempdir = form.write_files()[0]
-        self.assertEquals(set(os.listdir(tempdir)),
-                          set(['foo.shp', 'foo.shx', 'foo.dbf', 'foo.prj']))
+        self.assertEqual(set(os.listdir(tempdir)),
+                         set(['foo.shp', 'foo.shx', 'foo.dbf', 'foo.prj']))
         os.remove('test_upload.zip')
 
     def test_layer_type(self):
-        self.assertEquals(layer_type('foo.shp'), 'vector')
-        self.assertEquals(layer_type('foo.SHP'), 'vector')
-        self.assertEquals(layer_type('foo.sHp'), 'vector')
-        self.assertEquals(layer_type('foo.tif'), 'raster')
-        self.assertEquals(layer_type('foo.TIF'), 'raster')
-        self.assertEquals(layer_type('foo.TiF'), 'raster')
-        self.assertEquals(layer_type('foo.geotif'), 'raster')
-        self.assertEquals(layer_type('foo.GEOTIF'), 'raster')
-        self.assertEquals(layer_type('foo.gEoTiF'), 'raster')
-        self.assertEquals(layer_type('foo.tiff'), 'raster')
-        self.assertEquals(layer_type('foo.TIFF'), 'raster')
-        self.assertEquals(layer_type('foo.TiFf'), 'raster')
-        self.assertEquals(layer_type('foo.geotiff'), 'raster')
-        self.assertEquals(layer_type('foo.GEOTIFF'), 'raster')
-        self.assertEquals(layer_type('foo.gEoTiFf'), 'raster')
-        self.assertEquals(layer_type('foo.asc'), 'raster')
-        self.assertEquals(layer_type('foo.ASC'), 'raster')
-        self.assertEquals(layer_type('foo.AsC'), 'raster')
+        self.assertEqual(layer_type('foo.shp'), 'vector')
+        self.assertEqual(layer_type('foo.SHP'), 'vector')
+        self.assertEqual(layer_type('foo.sHp'), 'vector')
+        self.assertEqual(layer_type('foo.tif'), 'raster')
+        self.assertEqual(layer_type('foo.TIF'), 'raster')
+        self.assertEqual(layer_type('foo.TiF'), 'raster')
+        self.assertEqual(layer_type('foo.geotif'), 'raster')
+        self.assertEqual(layer_type('foo.GEOTIF'), 'raster')
+        self.assertEqual(layer_type('foo.gEoTiF'), 'raster')
+        self.assertEqual(layer_type('foo.tiff'), 'raster')
+        self.assertEqual(layer_type('foo.TIFF'), 'raster')
+        self.assertEqual(layer_type('foo.TiFf'), 'raster')
+        self.assertEqual(layer_type('foo.geotiff'), 'raster')
+        self.assertEqual(layer_type('foo.GEOTIFF'), 'raster')
+        self.assertEqual(layer_type('foo.gEoTiFf'), 'raster')
+        self.assertEqual(layer_type('foo.asc'), 'raster')
+        self.assertEqual(layer_type('foo.ASC'), 'raster')
+        self.assertEqual(layer_type('foo.AsC'), 'raster')
 
         # basically anything else should produce a GeoNodeException
         self.assertRaises(GeoNodeException, lambda: layer_type('foo.gml'))
@@ -452,8 +452,8 @@ class LayersTest(GeoNodeBaseTestSupport):
             gotten_files = get_files(os.path.join(d, "foo.shp"))
             gotten_files = dict((k, v[len(d) + 1:])
                                 for k, v in gotten_files.iteritems())
-            self.assertEquals(gotten_files, dict(shp="foo.shp", shx="foo.shx",
-                                                 prj="foo.prj", dbf="foo.dbf"))
+            self.assertEqual(gotten_files, dict(shp="foo.shp", shx="foo.shx",
+                                                prj="foo.prj", dbf="foo.dbf"))
         finally:
             if d is not None:
                 shutil.rmtree(d)
@@ -492,7 +492,7 @@ class LayersTest(GeoNodeBaseTestSupport):
                 gotten_files = get_files(os.path.join(d, "foo.shp"))
                 gotten_files = dict((k, v[len(d) + 1:])
                                     for k, v in gotten_files.iteritems())
-                self.assertEquals(
+                self.assertEqual(
                     gotten_files,
                     dict(
                         shp="foo.shp",
@@ -521,7 +521,7 @@ class LayersTest(GeoNodeBaseTestSupport):
                 gotten_files = get_files(os.path.join(d, "foo.shp"))
                 gotten_files = dict((k, v[len(d) + 1:])
                                     for k, v in gotten_files.iteritems())
-                self.assertEquals(
+                self.assertEqual(
                     gotten_files,
                     dict(
                         shp="foo.shp",
@@ -546,8 +546,8 @@ class LayersTest(GeoNodeBaseTestSupport):
             gotten_files = get_files(os.path.join(d, "foo.SHP"))
             gotten_files = dict((k, v[len(d) + 1:])
                                 for k, v in gotten_files.iteritems())
-            self.assertEquals(gotten_files, dict(shp="foo.SHP", shx="foo.SHX",
-                                                 prj="foo.PRJ", dbf="foo.DBF"))
+            self.assertEqual(gotten_files, dict(shp="foo.SHP", shx="foo.SHX",
+                                                prj="foo.PRJ", dbf="foo.DBF"))
         finally:
             if d is not None:
                 shutil.rmtree(d)
@@ -564,8 +564,8 @@ class LayersTest(GeoNodeBaseTestSupport):
             gotten_files = get_files(os.path.join(d, "foo.SHP"))
             gotten_files = dict((k, v[len(d) + 1:])
                                 for k, v in gotten_files.iteritems())
-            self.assertEquals(gotten_files, dict(shp="foo.SHP", shx="foo.shx",
-                                                 prj="foo.pRJ", dbf="foo.DBF"))
+            self.assertEqual(gotten_files, dict(shp="foo.SHP", shx="foo.shx",
+                                                prj="foo.pRJ", dbf="foo.DBF"))
         finally:
             if d is not None:
                 shutil.rmtree(d)
@@ -674,30 +674,30 @@ class LayersTest(GeoNodeBaseTestSupport):
                     shutil.rmtree(d)
 
     def test_get_valid_name(self):
-        self.assertEquals(get_valid_name("blug"), "blug")
-        self.assertEquals(get_valid_name("<-->"), "_")
-        self.assertEquals(get_valid_name("<ab>"), "_ab_")
-        self.assertEquals(get_valid_name("CA"), "CA_1")
-        self.assertEquals(get_valid_name("CA"), "CA_1")
+        self.assertEqual(get_valid_name("blug"), "blug")
+        self.assertEqual(get_valid_name("<-->"), "_")
+        self.assertEqual(get_valid_name("<ab>"), "_ab_")
+        self.assertEqual(get_valid_name("CA"), "CA_1")
+        self.assertEqual(get_valid_name("CA"), "CA_1")
 
     def test_get_valid_layer_name(self):
-        self.assertEquals(get_valid_layer_name("blug", False), "blug")
-        self.assertEquals(get_valid_layer_name("blug", True), "blug")
+        self.assertEqual(get_valid_layer_name("blug", False), "blug")
+        self.assertEqual(get_valid_layer_name("blug", True), "blug")
 
-        self.assertEquals(get_valid_layer_name("<ab>", False), "_ab_")
-        self.assertEquals(get_valid_layer_name("<ab>", True), "<ab>")
+        self.assertEqual(get_valid_layer_name("<ab>", False), "_ab_")
+        self.assertEqual(get_valid_layer_name("<ab>", True), "<ab>")
 
-        self.assertEquals(get_valid_layer_name("<-->", False), "_")
-        self.assertEquals(get_valid_layer_name("<-->", True), "<-->")
+        self.assertEqual(get_valid_layer_name("<-->", False), "_")
+        self.assertEqual(get_valid_layer_name("<-->", True), "<-->")
 
-        self.assertEquals(get_valid_layer_name("CA", False), "CA_1")
-        self.assertEquals(get_valid_layer_name("CA", False), "CA_1")
-        self.assertEquals(get_valid_layer_name("CA", True), "CA")
-        self.assertEquals(get_valid_layer_name("CA", True), "CA")
+        self.assertEqual(get_valid_layer_name("CA", False), "CA_1")
+        self.assertEqual(get_valid_layer_name("CA", False), "CA_1")
+        self.assertEqual(get_valid_layer_name("CA", True), "CA")
+        self.assertEqual(get_valid_layer_name("CA", True), "CA")
 
         layer = Layer.objects.get(name="CA")
-        self.assertEquals(get_valid_layer_name(layer, False), "CA_1")
-        self.assertEquals(get_valid_layer_name(layer, True), "CA")
+        self.assertEqual(get_valid_layer_name(layer, False), "CA_1")
+        self.assertEqual(get_valid_layer_name(layer, True), "CA")
 
         self.assertRaises(GeoNodeException, get_valid_layer_name, 12, False)
         self.assertRaises(GeoNodeException, get_valid_layer_name, 12, True)
@@ -746,7 +746,7 @@ class LayersTest(GeoNodeBaseTestSupport):
 
         # Check there are no ratings matching the remove layer
         rating = OverallRating.objects.filter(category=2, object_id=layer_id)
-        self.assertEquals(rating.count(), 0)
+        self.assertEqual(rating.count(), 0)
 
     def test_layer_remove(self):
         """Test layer remove functionality
@@ -756,12 +756,12 @@ class LayersTest(GeoNodeBaseTestSupport):
 
         # test unauthenticated
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # test a user without layer removal permission
         self.client.login(username='norman', password='norman')
         response = self.client.post(url)
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
         self.client.logout()
 
         # Now test with a valid user
@@ -769,22 +769,22 @@ class LayersTest(GeoNodeBaseTestSupport):
 
         # test a method other than POST and GET
         response = self.client.put(url)
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
         # test the page with a valid user with layer removal permission
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # test the post method that actually removes the layer and redirects
         response = self.client.post(url)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertTrue('/layers/' in response['Location'])
 
         # test that the layer is actually removed
-        self.assertEquals(Layer.objects.filter(pk=layer.pk).count(), 0)
+        self.assertEqual(Layer.objects.filter(pk=layer.pk).count(), 0)
 
         # test that all styles associated to the layer are removed
-        self.assertEquals(Style.objects.count(), 0)
+        self.assertEqual(Style.objects.count(), 0)
 
     def test_non_cascading(self):
         """
@@ -798,23 +798,23 @@ class LayersTest(GeoNodeBaseTestSupport):
         layer2.default_style = layer1.default_style
         layer2.save()
 
-        self.assertEquals(layer1.default_style, layer2.default_style)
+        self.assertEqual(layer1.default_style, layer2.default_style)
 
         # Now test with a valid user
         self.client.login(username='admin', password='admin')
 
         # test the post method that actually removes the layer and redirects
         response = self.client.post(url)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertTrue('/layers/' in response['Location'])
 
         # test that the layer is actually removed
 
-        self.assertEquals(Layer.objects.filter(pk=layer1.pk).count(), 0)
-        self.assertEquals(Layer.objects.filter(pk=layer2.pk).count(), 1)
+        self.assertEqual(Layer.objects.filter(pk=layer1.pk).count(), 0)
+        self.assertEqual(Layer.objects.filter(pk=layer2.pk).count(), 1)
 
         # test that all styles associated to the layer are removed
-        self.assertEquals(Style.objects.count(), 1)
+        self.assertEqual(Style.objects.count(), 1)
 
     def test_category_counts(self):
         topics = TopicCategory.objects.all()
@@ -822,7 +822,7 @@ class LayersTest(GeoNodeBaseTestSupport):
             **{'layer_count': Count('resourcebase__layer__category')})
         location = topics.get(identifier='location')
         # there are three layers with location category
-        self.assertEquals(location.layer_count, 3)
+        self.assertEqual(location.layer_count, 3)
 
         # change the category of one layers_count
         layer = Layer.objects.filter(category=location)[0]
@@ -835,19 +835,19 @@ class LayersTest(GeoNodeBaseTestSupport):
             **{'layer_count': Count('resourcebase__layer__category')})
         location = topics.get(identifier='location')
         elevation = topics.get(identifier='elevation')
-        self.assertEquals(location.layer_count, 2)
-        self.assertEquals(elevation.layer_count, 4)
+        self.assertEqual(location.layer_count, 2)
+        self.assertEqual(elevation.layer_count, 4)
 
         # delete a layer and check the count update
         # use the first since it's the only one which has styles
         layer = Layer.objects.all().first()
         elevation = topics.get(identifier='elevation')
-        self.assertEquals(elevation.layer_count, 4)
+        self.assertEqual(elevation.layer_count, 4)
         layer.delete()
         topics = topics.annotate(
             **{'layer_count': Count('resourcebase__layer__category')})
         elevation = topics.get(identifier='elevation')
-        self.assertEquals(elevation.layer_count, 3)
+        self.assertEqual(elevation.layer_count, 3)
 
     def test_assign_change_layer_data_perm(self):
         """
@@ -867,7 +867,7 @@ class LayersTest(GeoNodeBaseTestSupport):
         # test non-admin access
         self.client.login(username="bobby", password="bob")
         response = self.client.get(reverse(view, args=(ids,)))
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
         # test group change
         group = Group.objects.first()
         self.client.login(username='admin', password='admin')
@@ -875,37 +875,37 @@ class LayersTest(GeoNodeBaseTestSupport):
             reverse(view, args=(ids,)),
             data={'group': group.pk},
         )
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
-            self.assertEquals(resource.group, group)
+            self.assertEqual(resource.group, group)
         # test owner change
         owner = get_user_model().objects.first()
         response = self.client.post(
             reverse(view, args=(ids,)),
             data={'owner': owner.pk},
         )
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
-            self.assertEquals(resource.owner, owner)
+            self.assertEqual(resource.owner, owner)
         # test license change
         license = License.objects.first()
         response = self.client.post(
             reverse(view, args=(ids,)),
             data={'license': license.pk},
         )
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
-            self.assertEquals(resource.license, license)
+            self.assertEqual(resource.license, license)
         # test regions change
         region = Region.objects.first()
         response = self.client.post(
             reverse(view, args=(ids,)),
             data={'region': region.pk},
         )
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
             if resource.regions.all():
@@ -917,13 +917,13 @@ class LayersTest(GeoNodeBaseTestSupport):
             reverse(view, args=(ids,)),
             data={'date': date},
         )
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
             today = date.today()
             todoc = resource.date.today()
-            self.assertEquals((today.day, today.month, today.year),
-                              (todoc.day, todoc.month, todoc.year))
+            self.assertEqual((today.day, today.month, today.year),
+                             (todoc.day, todoc.month, todoc.year))
 
         # test language change
         language = 'eng'
@@ -933,7 +933,7 @@ class LayersTest(GeoNodeBaseTestSupport):
         )
         resources = Model.objects.filter(id__in=[r.pk for r in resources])
         for resource in resources:
-            self.assertEquals(resource.language, language)
+            self.assertEqual(resource.language, language)
         # test keywords change
         keywords = 'some,thing,new'
         response = self.client.post(
@@ -971,12 +971,12 @@ class UnpublishedObjectTests(GeoNodeBaseTestSupport):
         # access to layer detail page gives 200 if layer is published or
         # unpublished
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         layer = Layer.objects.filter(title='CA')[0]
         layer.is_published = False
         layer.save()
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     @override_settings(ADMIN_MODERATE_UPLOADS=True)
     @override_settings(RESOURCE_PUBLISHING=True)
@@ -990,26 +990,26 @@ class UnpublishedObjectTests(GeoNodeBaseTestSupport):
         self.client.login(username='foo', password='pass')
         # 404 if layer is unpublished
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
         # 404 if layer is unpublished but user has permission but does not belong to the group
         assign_perm('publish_resourcebase', user, layer.get_self_resource())
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
         # 200 if layer is unpublished and user is owner
         remove_perm('publish_resourcebase', user, layer.get_self_resource())
         layer.owner = user
         layer.save()
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # 200 if layer is published
         layer.is_published = True
         layer.save()
 
         response = self.client.get(reverse('layer_detail', args=('geonode:CA',)))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         layer.is_published = True
         layer.save()

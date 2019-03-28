@@ -167,13 +167,13 @@ class SiteTests(ResourceTestCaseMixin):
 
         self.client.login(username='bobby', password='bob')
         response = self.client.get(self.api_layer_url)
-        self.assertEquals(len(json.loads(response.content)['objects']), 5)
+        self.assertEqual(len(json.loads(response.content)['objects']), 5)
 
         # now test with superuser
         self.client.logout()
         self.client.login(username=self.user, password=self.passwd)
         response = self.client.get(self.api_layer_url)
-        self.assertEquals(len(json.loads(response.content)['objects']), 7)
+        self.assertEqual(len(json.loads(response.content)['objects']), 7)
 
     def test_new_site_cant_see_layers(self):
         """

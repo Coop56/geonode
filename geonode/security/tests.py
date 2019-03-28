@@ -205,14 +205,14 @@ class SecurityViewsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
         }
         resp = self.client.post(reverse('attributes_sats_refresh'), data)
         self.assertHttpOK(resp)
-        self.assertEquals(layer_attributes.count(), test_layer.attributes.count())
+        self.assertEqual(layer_attributes.count(), test_layer.attributes.count())
 
         from geonode.geoserver.helpers import set_attributes_from_geoserver
         test_layer.attribute_set.all().delete()
         test_layer.save()
 
         set_attributes_from_geoserver(test_layer, overwrite=True)
-        self.assertEquals(layer_attributes.count(), test_layer.attributes.count())
+        self.assertEqual(layer_attributes.count(), test_layer.attributes.count())
 
     @on_ogc_backend(geoserver.BACKEND_PACKAGE)
     def test_invalidate_tiledlayer_cache(self):
@@ -256,7 +256,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             purge_geofence_all()
             # Reset GeoFence Rules
             geofence_rules_count = get_geofence_rules_count()
-            self.assertEquals(geofence_rules_count, 0)
+            self.assertEqual(geofence_rules_count, 0)
 
         layers = Layer.objects.all()[:2].values_list('id', flat=True)
         layers_id = map(lambda x: str(x), layers)
@@ -264,7 +264,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
 
         self.client.login(username='admin', password='admin')
         resp = self.client.get(self.list_url)
-        self.assertEquals(len(self.deserialize(resp)['objects']), 8)
+        self.assertEqual(len(self.deserialize(resp)['objects']), 8)
         data = {
             'permissions': json.dumps(self.perm_spec),
             'resources': layers_id
@@ -276,17 +276,17 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             # Check GeoFence Rules have been correctly created
             geofence_rules_count = get_geofence_rules_count()
             _log("1. geofence_rules_count: %s " % geofence_rules_count)
-            self.assertEquals(geofence_rules_count, 4)
+            self.assertEqual(geofence_rules_count, 4)
             set_geofence_all(test_perm_layer)
             geofence_rules_count = get_geofence_rules_count()
             _log("2. geofence_rules_count: %s " % geofence_rules_count)
-            self.assertEquals(geofence_rules_count, 5)
+            self.assertEqual(geofence_rules_count, 5)
 
         self.client.logout()
 
         self.client.login(username='bobby', password='bob')
         resp = self.client.get(self.list_url)
-        self.assertEquals(len(self.deserialize(resp)['objects']), 7)
+        self.assertEqual(len(self.deserialize(resp)['objects']), 7)
 
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             perms = get_users_with_perms(test_perm_layer)
@@ -296,7 +296,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             # Check GeoFence Rules have been correctly created
             geofence_rules_count = get_geofence_rules_count()
             _log("4. geofence_rules_count: %s " % geofence_rules_count)
-            self.assertEquals(geofence_rules_count, 5)
+            self.assertEqual(geofence_rules_count, 5)
 
             # Validate maximum priority
             geofence_rules_highest_priority = get_highest_priority()
@@ -314,14 +314,14 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             from requests.auth import HTTPBasicAuth
             r = requests.get(url + 'gwc/rest/seed/%s.json' % test_perm_layer.alternate,
                              auth=HTTPBasicAuth(user, passwd))
-            self.assertEquals(r.status_code, 400)
+            self.assertEqual(r.status_code, 400)
 
         geofence_rules_count = 0
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             purge_geofence_all()
             # Reset GeoFence Rules
             geofence_rules_count = get_geofence_rules_count()
-            self.assertEquals(geofence_rules_count, 0)
+            self.assertEqual(geofence_rules_count, 0)
 
     def test_bobby_cannot_set_all(self):
         """Test that Bobby can set the permissions only only on the ones
@@ -356,43 +356,43 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
         # Reset GeoFence Rules
         purge_geofence_all()
         geofence_rules_count = get_geofence_rules_count()
-        self.assertEquals(geofence_rules_count, 0)
+        self.assertEqual(geofence_rules_count, 0)
 
         perm_spec = {'users': {'AnonymousUser': []}}
         layer.set_permissions(perm_spec)
         geofence_rules_count = get_geofence_rules_count()
         _log("1. geofence_rules_count: %s " % geofence_rules_count)
-        self.assertEquals(geofence_rules_count, 0)
+        self.assertEqual(geofence_rules_count, 0)
 
         perm_spec = {
             "users": {"admin": ["view_resourcebase"]}, "groups": {}}
         layer.set_permissions(perm_spec)
         geofence_rules_count = get_geofence_rules_count()
         _log("2. geofence_rules_count: %s " % geofence_rules_count)
-        self.assertEquals(geofence_rules_count, 2)
+        self.assertEqual(geofence_rules_count, 2)
 
         perm_spec = {'users': {"admin": ['change_layer_data']}}
         layer.set_permissions(perm_spec)
         geofence_rules_count = get_geofence_rules_count()
         _log("3. geofence_rules_count: %s " % geofence_rules_count)
-        self.assertEquals(geofence_rules_count, 2)
+        self.assertEqual(geofence_rules_count, 2)
 
         perm_spec = {'groups': {'bar': ['view_resourcebase']}}
         layer.set_permissions(perm_spec)
         geofence_rules_count = get_geofence_rules_count()
         _log("4. geofence_rules_count: %s " % geofence_rules_count)
-        self.assertEquals(geofence_rules_count, 2)
+        self.assertEqual(geofence_rules_count, 2)
 
         perm_spec = {'groups': {'bar': ['change_resourcebase']}}
         layer.set_permissions(perm_spec)
         geofence_rules_count = get_geofence_rules_count()
         _log("5. geofence_rules_count: %s " % geofence_rules_count)
-        self.assertEquals(geofence_rules_count, 0)
+        self.assertEqual(geofence_rules_count, 0)
 
         # Reset GeoFence Rules
         purge_geofence_all()
         geofence_rules_count = get_geofence_rules_count()
-        self.assertEquals(geofence_rules_count, 0)
+        self.assertEqual(geofence_rules_count, 0)
 
     @on_ogc_backend(geoserver.BACKEND_PACKAGE)
     def test_layer_upload_with_time(self):
@@ -472,12 +472,12 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             from requests.auth import HTTPBasicAuth
             r = requests.get(url + rest_path,
                              auth=HTTPBasicAuth(user, passwd))
-            self.assertEquals(r.status_code, 200)
+            self.assertEqual(r.status_code, 200)
             _log(r.text)
 
             featureType = etree.ElementTree(etree.fromstring(r.text))
             metadata = featureType.findall('./[metadata]')
-            self.assertEquals(len(metadata), 0)
+            self.assertEqual(len(metadata), 0)
 
             payload = """<featureType>
             <metadata>
@@ -504,17 +504,17 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
                                  'Content-type': 'application/xml'
                              },
                              auth=HTTPBasicAuth(user, passwd))
-            self.assertEquals(r.status_code, 200)
+            self.assertEqual(r.status_code, 200)
 
             r = requests.get(url + rest_path,
                              auth=HTTPBasicAuth(user, passwd))
-            self.assertEquals(r.status_code, 200)
+            self.assertEqual(r.status_code, 200)
             _log(r.text)
 
             featureType = etree.ElementTree(etree.fromstring(r.text))
             metadata = featureType.findall('./[metadata]')
             _log(etree.tostring(metadata[0], encoding='utf8', method='xml'))
-            self.assertEquals(len(metadata), 1)
+            self.assertEqual(len(metadata), 1)
 
             saved_layer.set_default_permissions()
 
@@ -547,62 +547,62 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
                                     break
 
             self.assertIsNotNone(all_times)
-            self.assertEquals(all_times,
-                              ['2000-03-01T00:00:00.000Z', '2000-03-02T00:00:00.000Z',
-                               '2000-03-03T00:00:00.000Z', '2000-03-04T00:00:00.000Z',
-                               '2000-03-05T00:00:00.000Z', '2000-03-06T00:00:00.000Z',
-                               '2000-03-07T00:00:00.000Z', '2000-03-08T00:00:00.000Z',
-                               '2000-03-09T00:00:00.000Z', '2000-03-10T00:00:00.000Z',
-                               '2000-03-11T00:00:00.000Z', '2000-03-12T00:00:00.000Z',
-                               '2000-03-13T00:00:00.000Z', '2000-03-14T00:00:00.000Z',
-                               '2000-03-15T00:00:00.000Z', '2000-03-16T00:00:00.000Z',
-                               '2000-03-17T00:00:00.000Z', '2000-03-18T00:00:00.000Z',
-                               '2000-03-19T00:00:00.000Z', '2000-03-20T00:00:00.000Z',
-                               '2000-03-21T00:00:00.000Z', '2000-03-22T00:00:00.000Z',
-                               '2000-03-23T00:00:00.000Z', '2000-03-24T00:00:00.000Z',
-                               '2000-03-25T00:00:00.000Z', '2000-03-26T00:00:00.000Z',
-                               '2000-03-27T00:00:00.000Z', '2000-03-28T00:00:00.000Z',
-                               '2000-03-29T00:00:00.000Z', '2000-03-30T00:00:00.000Z',
-                               '2000-03-31T00:00:00.000Z', '2000-04-01T00:00:00.000Z',
-                               '2000-04-02T00:00:00.000Z', '2000-04-03T00:00:00.000Z',
-                               '2000-04-04T00:00:00.000Z', '2000-04-05T00:00:00.000Z',
-                               '2000-04-06T00:00:00.000Z', '2000-04-07T00:00:00.000Z',
-                               '2000-04-08T00:00:00.000Z', '2000-04-09T00:00:00.000Z',
-                               '2000-04-10T00:00:00.000Z', '2000-04-11T00:00:00.000Z',
-                               '2000-04-12T00:00:00.000Z', '2000-04-13T00:00:00.000Z',
-                               '2000-04-14T00:00:00.000Z', '2000-04-15T00:00:00.000Z',
-                               '2000-04-16T00:00:00.000Z', '2000-04-17T00:00:00.000Z',
-                               '2000-04-18T00:00:00.000Z', '2000-04-19T00:00:00.000Z',
-                               '2000-04-20T00:00:00.000Z', '2000-04-21T00:00:00.000Z',
-                               '2000-04-22T00:00:00.000Z', '2000-04-23T00:00:00.000Z',
-                               '2000-04-24T00:00:00.000Z', '2000-04-25T00:00:00.000Z',
-                               '2000-04-26T00:00:00.000Z', '2000-04-27T00:00:00.000Z',
-                               '2000-04-28T00:00:00.000Z', '2000-04-29T00:00:00.000Z',
-                               '2000-04-30T00:00:00.000Z', '2000-05-01T00:00:00.000Z',
-                               '2000-05-02T00:00:00.000Z', '2000-05-03T00:00:00.000Z',
-                               '2000-05-04T00:00:00.000Z', '2000-05-05T00:00:00.000Z',
-                               '2000-05-06T00:00:00.000Z', '2000-05-07T00:00:00.000Z',
-                               '2000-05-08T00:00:00.000Z', '2000-05-09T00:00:00.000Z',
-                               '2000-05-10T00:00:00.000Z', '2000-05-11T00:00:00.000Z',
-                               '2000-05-12T00:00:00.000Z', '2000-05-13T00:00:00.000Z',
-                               '2000-05-14T00:00:00.000Z', '2000-05-15T00:00:00.000Z',
-                               '2000-05-16T00:00:00.000Z', '2000-05-17T00:00:00.000Z',
-                               '2000-05-18T00:00:00.000Z', '2000-05-19T00:00:00.000Z',
-                               '2000-05-20T00:00:00.000Z', '2000-05-21T00:00:00.000Z',
-                               '2000-05-22T00:00:00.000Z', '2000-05-23T00:00:00.000Z',
-                               '2000-05-24T00:00:00.000Z', '2000-05-25T00:00:00.000Z',
-                               '2000-05-26T00:00:00.000Z', '2000-05-27T00:00:00.000Z',
-                               '2000-05-28T00:00:00.000Z', '2000-05-29T00:00:00.000Z',
-                               '2000-05-30T00:00:00.000Z', '2000-05-31T00:00:00.000Z',
-                               '2000-06-01T00:00:00.000Z', '2000-06-02T00:00:00.000Z',
-                               '2000-06-03T00:00:00.000Z', '2000-06-04T00:00:00.000Z',
-                               '2000-06-05T00:00:00.000Z', '2000-06-06T00:00:00.000Z',
-                               '2000-06-07T00:00:00.000Z', '2000-06-08T00:00:00.000Z'])
+            self.assertEqual(all_times,
+                             ['2000-03-01T00:00:00.000Z', '2000-03-02T00:00:00.000Z',
+                              '2000-03-03T00:00:00.000Z', '2000-03-04T00:00:00.000Z',
+                              '2000-03-05T00:00:00.000Z', '2000-03-06T00:00:00.000Z',
+                              '2000-03-07T00:00:00.000Z', '2000-03-08T00:00:00.000Z',
+                              '2000-03-09T00:00:00.000Z', '2000-03-10T00:00:00.000Z',
+                              '2000-03-11T00:00:00.000Z', '2000-03-12T00:00:00.000Z',
+                              '2000-03-13T00:00:00.000Z', '2000-03-14T00:00:00.000Z',
+                              '2000-03-15T00:00:00.000Z', '2000-03-16T00:00:00.000Z',
+                              '2000-03-17T00:00:00.000Z', '2000-03-18T00:00:00.000Z',
+                              '2000-03-19T00:00:00.000Z', '2000-03-20T00:00:00.000Z',
+                              '2000-03-21T00:00:00.000Z', '2000-03-22T00:00:00.000Z',
+                              '2000-03-23T00:00:00.000Z', '2000-03-24T00:00:00.000Z',
+                              '2000-03-25T00:00:00.000Z', '2000-03-26T00:00:00.000Z',
+                              '2000-03-27T00:00:00.000Z', '2000-03-28T00:00:00.000Z',
+                              '2000-03-29T00:00:00.000Z', '2000-03-30T00:00:00.000Z',
+                              '2000-03-31T00:00:00.000Z', '2000-04-01T00:00:00.000Z',
+                              '2000-04-02T00:00:00.000Z', '2000-04-03T00:00:00.000Z',
+                              '2000-04-04T00:00:00.000Z', '2000-04-05T00:00:00.000Z',
+                              '2000-04-06T00:00:00.000Z', '2000-04-07T00:00:00.000Z',
+                              '2000-04-08T00:00:00.000Z', '2000-04-09T00:00:00.000Z',
+                              '2000-04-10T00:00:00.000Z', '2000-04-11T00:00:00.000Z',
+                              '2000-04-12T00:00:00.000Z', '2000-04-13T00:00:00.000Z',
+                              '2000-04-14T00:00:00.000Z', '2000-04-15T00:00:00.000Z',
+                              '2000-04-16T00:00:00.000Z', '2000-04-17T00:00:00.000Z',
+                              '2000-04-18T00:00:00.000Z', '2000-04-19T00:00:00.000Z',
+                              '2000-04-20T00:00:00.000Z', '2000-04-21T00:00:00.000Z',
+                              '2000-04-22T00:00:00.000Z', '2000-04-23T00:00:00.000Z',
+                              '2000-04-24T00:00:00.000Z', '2000-04-25T00:00:00.000Z',
+                              '2000-04-26T00:00:00.000Z', '2000-04-27T00:00:00.000Z',
+                              '2000-04-28T00:00:00.000Z', '2000-04-29T00:00:00.000Z',
+                              '2000-04-30T00:00:00.000Z', '2000-05-01T00:00:00.000Z',
+                              '2000-05-02T00:00:00.000Z', '2000-05-03T00:00:00.000Z',
+                              '2000-05-04T00:00:00.000Z', '2000-05-05T00:00:00.000Z',
+                              '2000-05-06T00:00:00.000Z', '2000-05-07T00:00:00.000Z',
+                              '2000-05-08T00:00:00.000Z', '2000-05-09T00:00:00.000Z',
+                              '2000-05-10T00:00:00.000Z', '2000-05-11T00:00:00.000Z',
+                              '2000-05-12T00:00:00.000Z', '2000-05-13T00:00:00.000Z',
+                              '2000-05-14T00:00:00.000Z', '2000-05-15T00:00:00.000Z',
+                              '2000-05-16T00:00:00.000Z', '2000-05-17T00:00:00.000Z',
+                              '2000-05-18T00:00:00.000Z', '2000-05-19T00:00:00.000Z',
+                              '2000-05-20T00:00:00.000Z', '2000-05-21T00:00:00.000Z',
+                              '2000-05-22T00:00:00.000Z', '2000-05-23T00:00:00.000Z',
+                              '2000-05-24T00:00:00.000Z', '2000-05-25T00:00:00.000Z',
+                              '2000-05-26T00:00:00.000Z', '2000-05-27T00:00:00.000Z',
+                              '2000-05-28T00:00:00.000Z', '2000-05-29T00:00:00.000Z',
+                              '2000-05-30T00:00:00.000Z', '2000-05-31T00:00:00.000Z',
+                              '2000-06-01T00:00:00.000Z', '2000-06-02T00:00:00.000Z',
+                              '2000-06-03T00:00:00.000Z', '2000-06-04T00:00:00.000Z',
+                              '2000-06-05T00:00:00.000Z', '2000-06-06T00:00:00.000Z',
+                              '2000-06-07T00:00:00.000Z', '2000-06-08T00:00:00.000Z'])
 
             saved_layer.set_default_permissions()
             url = reverse('layer_metadata', args=[saved_layer.service_typename])
             resp = self.client.get(url)
-            self.assertEquals(resp.status_code, 200)
+            self.assertEqual(resp.status_code, 200)
         finally:
             # Clean up and completely delete the layer
             try:
@@ -669,7 +669,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
 
             geofence_rules_count = get_geofence_rules_count()
             _log("0. geofence_rules_count: %s " % geofence_rules_count)
-            self.assertEquals(geofence_rules_count, 2)
+            self.assertEqual(geofence_rules_count, 2)
 
             # Set the layer private for not authenticated users
             layer.set_permissions({'users': {'AnonymousUser': []}})
@@ -755,7 +755,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             # user without change_layer_style cannot edit it
             self.assertTrue(self.client.login(username='bobby', password='bob'))
             response = self.client.put(url, sld, content_type='application/vnd.ogc.sld+xml')
-            self.assertEquals(response.status_code, 401)
+            self.assertEqual(response.status_code, 401)
 
             # user with change_layer_style can edit it
             assign_perm('change_layer_style', bobby, layer)
@@ -767,7 +767,7 @@ class BulkPermissionsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             }
             layer.set_permissions(perm_spec)
             response = self.client.get(url)
-            self.assertEquals(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
             response = self.client.put(url, sld, content_type='application/vnd.ogc.sld+xml')
         finally:
             try:
@@ -912,7 +912,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'resource_permissions', args=(
                     invalid_layer_id,)), data=json.dumps(
                 self.perm_spec), content_type="application/json")
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
         # Test that GET returns permissions
         response = self.client.get(
@@ -931,21 +931,21 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'resource_permissions', args=(
                     valid_layer_typename,)), data=json.dumps(
                 self.perm_spec), content_type="application/json")
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
 
         # Next Test with a user that does NOT have the proper perms
         logged_in = self.client.login(username='bobby', password='bob')
-        self.assertEquals(logged_in, True)
+        self.assertEqual(logged_in, True)
         response = self.client.post(
             reverse(
                 'resource_permissions', args=(
                     valid_layer_typename,)), data=json.dumps(
                 self.perm_spec), content_type="application/json")
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # Login as a user with the proper permission and test the endpoint
         logged_in = self.client.login(username='admin', password='admin')
-        self.assertEquals(logged_in, True)
+        self.assertEqual(logged_in, True)
 
         response = self.client.post(
             reverse(
@@ -954,7 +954,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 self.perm_spec), content_type="application/json")
 
         # Test that the method returns 200
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # Test that the permissions specification is applied
 
@@ -1031,20 +1031,20 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 layer.get_self_resource()))
 
         response = self.client.get(reverse('layer_detail', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # 1.2 has not view_resourcebase: verify that bobby can not access the
         # layer detail page
         remove_perm('view_resourcebase', bob, layer.get_self_resource())
         anonymous_group = Group.objects.get(name='anonymous')
         remove_perm('view_resourcebase', anonymous_group, layer.get_self_resource())
         response = self.client.get(reverse('layer_detail', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
 
         # 2. change_resourcebase
         # 2.1 has not change_resourcebase: verify that bobby cannot access the
         # layer replace page
         response = self.client.get(reverse('layer_replace', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # 2.2 has change_resourcebase: verify that bobby can access the layer
         # replace page
         assign_perm('change_resourcebase', bob, layer.get_self_resource())
@@ -1053,13 +1053,13 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'change_resourcebase',
                 layer.get_self_resource()))
         response = self.client.get(reverse('layer_replace', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # 3. delete_resourcebase
         # 3.1 has not delete_resourcebase: verify that bobby cannot access the
         # layer delete page
         response = self.client.get(reverse('layer_remove', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # 3.2 has delete_resourcebase: verify that bobby can access the layer
         # delete page
         assign_perm('delete_resourcebase', bob, layer.get_self_resource())
@@ -1068,13 +1068,13 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'delete_resourcebase',
                 layer.get_self_resource()))
         response = self.client.get(reverse('layer_remove', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # 4. change_resourcebase_metadata
         # 4.1 has not change_resourcebase_metadata: verify that bobby cannot
         # access the layer metadata page
         response = self.client.get(reverse('layer_metadata', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # 4.2 has delete_resourcebase: verify that bobby can access the layer
         # delete page
         assign_perm('change_resourcebase_metadata', bob, layer.get_self_resource())
@@ -1083,7 +1083,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'change_resourcebase_metadata',
                 layer.get_self_resource()))
         response = self.client.get(reverse('layer_metadata', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             perms = get_users_with_perms(layer)
@@ -1093,7 +1093,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
             # Check GeoFence Rules have been correctly created
             geofence_rules_count = get_geofence_rules_count()
             _log("3. geofence_rules_count: %s " % geofence_rules_count)
-            self.assertEquals(geofence_rules_count, 1)
+            self.assertEqual(geofence_rules_count, 1)
 
         # 5. change_resourcebase_permissions
         # should be impossible for the user without change_resourcebase_permissions
@@ -1109,7 +1109,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             # Only for geoserver backend
             response = self.client.get(reverse('layer_style_manage', args=(layer.alternate,)))
-            self.assertEquals(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
         # 7.2 has change_layer_style: verify that bobby can access the
         # change layer style page
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
@@ -1120,14 +1120,14 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                     'change_layer_style',
                     layer))
             response = self.client.get(reverse('layer_style_manage', args=(layer.alternate,)))
-            self.assertEquals(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         geofence_rules_count = 0
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             purge_geofence_all()
             # Reset GeoFence Rules
             geofence_rules_count = get_geofence_rules_count()
-            self.assertEquals(geofence_rules_count, 0)
+            self.assertEqual(geofence_rules_count, 0)
 
     def test_anonymus_permissions(self):
 
@@ -1142,32 +1142,32 @@ class PermissionsTest(GeoNodeBaseTestSupport):
                 'view_resourcebase',
                 layer.get_self_resource()))
         response = self.client.get(reverse('layer_detail', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # 1.2 has not view_resourcebase: verify that anonymous user can not
         # access the layer detail page
         remove_perm('view_resourcebase', self.anonymous_user, layer.get_self_resource())
         anonymous_group = Group.objects.get(name='anonymous')
         remove_perm('view_resourcebase', anonymous_group, layer.get_self_resource())
         response = self.client.get(reverse('layer_detail', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # 2. change_resourcebase
         # 2.1 has not change_resourcebase: verify that anonymous user cannot
         # access the layer replace page but redirected to login
         response = self.client.get(reverse('layer_replace', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # 3. delete_resourcebase
         # 3.1 has not delete_resourcebase: verify that anonymous user cannot
         # access the layer delete page but redirected to login
         response = self.client.get(reverse('layer_remove', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # 4. change_resourcebase_metadata
         # 4.1 has not change_resourcebase_metadata: verify that anonymous user
         # cannot access the layer metadata page but redirected to login
         response = self.client.get(reverse('layer_metadata', args=(layer.alternate,)))
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # 5 N\A? 6 is an integration test...
 
@@ -1177,7 +1177,7 @@ class PermissionsTest(GeoNodeBaseTestSupport):
         if check_ogc_backend(geoserver.BACKEND_PACKAGE):
             # Only for geoserver backend
             response = self.client.get(reverse('layer_style_manage', args=(layer.alternate,)))
-            self.assertEquals(response.status_code, 302)
+            self.assertEqual(response.status_code, 302)
 
     def test_map_download(self):
         """Test the correct permissions on layers on map download"""
@@ -1249,7 +1249,7 @@ class GisBackendSignalsTests(ResourceTestCaseMixin, GeoNodeBaseTestSupport):
             self.assertIsNotNone(test_perm_layer.bbox)
             self.assertIsNotNone(test_perm_layer.srid)
             self.assertIsNotNone(test_perm_layer.link_set)
-            self.assertEquals(len(test_perm_layer.link_set.all()), 9)
+            self.assertEqual(len(test_perm_layer.link_set.all()), 9)
 
             # Layer Manipulation
             from geonode.geoserver.upload import geoserver_upload

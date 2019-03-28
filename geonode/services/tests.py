@@ -290,7 +290,7 @@ class WmsServiceHandlerTestCase(GeoNodeBaseTestSupport):
     def test_local_user_cant_delete_service(self):
         self.client.logout()
         response = self.client.get(reverse('register_service'))
-        self.failUnlessEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         url = 'https://demo.geo-solutions.it/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities'
         # url = "http://fake"
         service_type = enumerations.WMS
@@ -305,15 +305,15 @@ class WmsServiceHandlerTestCase(GeoNodeBaseTestSupport):
         response = self.client.post(reverse('register_service'), data=form_data)
 
         s = Service.objects.all().first()
-        self.failUnlessEqual(len(Service.objects.all()), 1)
+        self.assertEqual(len(Service.objects.all()), 1)
         self.assertEqual(s.owner, self.test_user)
 
         self.client.login(username='serviceuser', password='somepassword')
         response = self.client.post(reverse('edit_service', args=(s.id,)))
-        self.failUnlessEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
         response = self.client.post(reverse('remove_service', args=(s.id,)))
-        self.failUnlessEqual(response.status_code, 401)
-        self.failUnlessEqual(len(Service.objects.all()), 1)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(len(Service.objects.all()), 1)
 
         self.client.login(username='serviceowner', password='somepassword')
         form_data = {
@@ -332,7 +332,7 @@ class WmsServiceHandlerTestCase(GeoNodeBaseTestSupport):
         self.assertEqual([u'Foo', u'OWS', u'Service'],
                          list(s.keywords.all().values_list('name', flat=True)))
         response = self.client.post(reverse('remove_service', args=(s.id,)))
-        self.failUnlessEqual(len(Service.objects.all()), 0)
+        self.assertEqual(len(Service.objects.all()), 0)
 
 
 class WmsServiceHarvestingTestCase(StaticLiveServerTestCase):

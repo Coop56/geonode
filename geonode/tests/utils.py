@@ -147,7 +147,7 @@ class TestSetAttributes(GeoNodeBaseTestSupport):
         set_attributes(_l, attribute_map)
 
         # 2 items in attribute_map should translate into 2 Attribute instances
-        self.assertEquals(_l.attributes.count(), len(expected_results))
+        self.assertEqual(_l.attributes.count(), len(expected_results))
 
         # The name and type should be set as provided by attribute map
         for a in _l.attributes:
