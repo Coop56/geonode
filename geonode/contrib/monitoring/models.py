@@ -575,7 +575,7 @@ class RequestEvent(models.Model):
                 'client_city': city}
         inst = cls.objects.create(**data)
         resource_names = (rd.get('resources') or {}).get('string') or []
-        if not isinstance(resource_names, (list, tuple,)):
+        if not isinstance(resource_names, (list, tuple)):
             resource_names = [resource_names]
         resources = cls._get_resources('layer', resource_names)
         if rd.get('error'):
@@ -614,12 +614,12 @@ class ExceptionEvent(models.Model):
     def add_error(cls, from_service, error_type, stack_trace,
                   request=None, created=None, message=None):
         received = datetime.utcnow().replace(tzinfo=pytz.utc)
-        if not isinstance(error_type, (str,)):
+        if not isinstance(error_type, str):
             _cls = error_type.__class__
             error_type = '{}.{}'.format(_cls.__module__, _cls.__name__)
         if not message:
             message = str(error_type)
-        if isinstance(stack_trace, (list, tuple,)):
+        if isinstance(stack_trace, (list, tuple)):
             stack_trace = ''.join(stack_trace)
 
         if not isinstance(created, datetime):
@@ -964,8 +964,8 @@ class NotificationCheck(models.Model):
 
     @classmethod
     def get_steps(cls, min_, max_, thresholds):
-        if isinstance(thresholds, (int, int,
-                                   float, Decimal,)):
+        if isinstance(thresholds, (int,
+                                   float, Decimal)):
             if min_ is None or max_ is None:
                 raise ValueError(
                     "Cannot use numeric threshold if one of min/max is None")
@@ -976,7 +976,7 @@ class NotificationCheck(models.Model):
                 thresholds.append(current)
                 current += step
 
-        if isinstance(thresholds, (tuple, types.GeneratorType,)):
+        if isinstance(thresholds, (tuple, types.GeneratorType)):
             thresholds = list(thresholds)
         elif isinstance(thresholds, list) or thresholds is None:
             pass

@@ -171,7 +171,7 @@ class CollectorAPI(object):
             if metric_name is None:
                 continue
             value = metric_data['value']
-            if isinstance(value, (str, unicode,)):
+            if isinstance(value, (str, unicode)):
                 value = value.replace(',', '.')
             mdata = {'value': value,
                      'value_raw': value,
@@ -491,7 +491,7 @@ class CollectorAPI(object):
                                   'label': label,
                                   'samples_count': samples,
                                   'value_raw': value or 0,
-                                  'value_num': value if isinstance(value, (int, float, long, Decimal,)) else None})
+                                  'value_num': value if isinstance(value, (int, float, long, Decimal)) else None})
             print MetricValue.add(**metric_values)
 
     def process(self, service, data, valid_from, valid_to, *args, **kwargs):
