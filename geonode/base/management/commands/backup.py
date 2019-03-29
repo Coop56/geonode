@@ -286,7 +286,7 @@ class Command(BaseCommand):
             if not os.path.exists(target_folder):
                 os.makedirs(target_folder)
             # Temporary folder to store backup files. It will be deleted at the end.
-            os.chmod(target_folder, 0777)
+            os.chmod(target_folder, 0o777)
 
             if not skip_geoserver:
                 self.create_geoserver_backup(settings, target_folder)
