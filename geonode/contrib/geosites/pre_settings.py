@@ -25,7 +25,7 @@
 import os
 import geonode
 GEONODE_ROOT = os.path.realpath(os.path.dirname(geonode.__file__))
-execfile(os.path.join(GEONODE_ROOT, 'settings.py'))
+exec(compile(open(os.path.join(GEONODE_ROOT, 'settings.py'), "rb").read(), os.path.join(GEONODE_ROOT, 'settings.py'), 'exec'))
 
 # project location
 PROJECT_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))

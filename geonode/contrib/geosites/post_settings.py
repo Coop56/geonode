@@ -30,7 +30,7 @@
 # geonode local_settings
 try:
     # load in local_settings from system installed geonode
-    execfile(os.path.join(GEONODE_ROOT, 'local_settings.py'))
+    exec(compile(open(os.path.join(GEONODE_ROOT, 'local_settings.py'), "rb").read(), os.path.join(GEONODE_ROOT, 'local_settings.py'), 'exec'))
 except BaseException:
     # there are no system geonode local_settings to import
     pass
@@ -38,7 +38,7 @@ except BaseException:
 # master local_settings
 try:
     # load in local_settings (usually for setting SITEURL and DATABASES for production)
-    execfile(os.path.join(SITE_ROOT, '../', 'local_settings.py'))
+    exec(compile(open(os.path.join(SITE_ROOT, '../', 'local_settings.py'), "rb").read(), os.path.join(SITE_ROOT, '../', 'local_settings.py'), 'exec'))
 except BaseException:
     # there are no master local_settings to import
     pass
@@ -46,7 +46,7 @@ except BaseException:
 # site local_settings
 try:
     # load in local_settings (usually for setting SITEURL and DATABASES for production)
-    execfile(os.path.join(SITE_ROOT, 'local_settings.py'))
+    exec(compile(open(os.path.join(SITE_ROOT, 'local_settings.py'), "rb").read(), os.path.join(SITE_ROOT, 'local_settings.py'), 'exec'))
 except BaseException:
     # there are no site local_settings to import
     pass
