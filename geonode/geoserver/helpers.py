@@ -278,7 +278,7 @@ def get_sld_for(gs_catalog, layer):
     # layers we should use that rather than guessing based on the auto-detected
     # style.
     if name in _style_templates:
-        fg, bg, mark = _style_contexts.next()
+        fg, bg, mark = next(_style_contexts)
         return _style_templates[name] % dict(
             name=layer.name,
             fg=fg,

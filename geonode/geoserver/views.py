@@ -118,8 +118,8 @@ def layer_style(request, layername):
     # that the new default style name is included
     # in the list of possible styles.
 
-    new_style = (
-        style for style in layer.styles if style.name == style_name).next()
+    new_style = next((
+        style for style in layer.styles if style.name == style_name))
 
     # Does this change this in geoserver??
     layer.default_style = new_style
